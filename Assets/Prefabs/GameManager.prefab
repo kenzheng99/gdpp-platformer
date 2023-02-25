@@ -44,4 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f68d0e39d8d0d814a987e14169739cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 4168846181654204237, guid: 2cf44e27a5ffd5940b58bc4db78c3e8f, type: 3}
   lastCheckpointPos: {x: 0, y: 0}
