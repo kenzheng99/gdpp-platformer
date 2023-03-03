@@ -1,13 +1,15 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour {
     [SerializeField] private GameObject objectToFollow;
     [SerializeField] private Vector3 offset;
+    [SerializeField] private float followSpeed;
 
-    void Update() {
-        gameObject.transform.position = objectToFollow.transform.position + offset;
+    void FixedUpdate() {
+        Vector3 targetPosition = objectToFollow.transform.position + offset;
+        float distance = (targetPosition - transform.position).magnitude;
+        Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, followSpeed * distance * Time.fixedDeltaTime);
+        transform.position = newPosition;
     }
 }
