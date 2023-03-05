@@ -37,7 +37,7 @@ public class PlayerData : ScriptableObject
 	[HideInInspector] public float jumpForce; //The actual force applied (upwards) to the player when they jump.
 
 	[Header("Both Jumps")]
-	public float jumpCutGravityMult; //Multiplier to increase gravity if the player releases thje jump button while still jumping
+	public float jumpCutGravityMult; //Multiplier to increase gravity if the player releases the jump button while still jumping
 	[Range(0f, 1)] public float jumpHangGravityMult; //Reduces gravity while close to the apex (desired max height) of the jump
 	public float jumpHangTimeThreshold; //Speeds (close to 0) where the player will experience extra "jump hang". The player's velocity.y is closest to 0 at the jump's apex (think of the gradient of a parabola or quadratic function)
 	[Space(0.5f)]

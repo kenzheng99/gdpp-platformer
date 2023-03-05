@@ -90,16 +90,15 @@ public class PlayerMovement : MonoBehaviour
 
 		if (_moveInput.x != 0) {
 			CheckDirectionToFace(_moveInput.x > 0);
-			Debug.Log("here");
 		}
 			
 
-		if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
+		if(Input.GetKeyDown(KeyCode.Space))// || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
         {
 			OnJumpInput();
         }
 
-		if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
+		if (Input.GetKeyUp(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
 		{
 			OnJumpUpInput();
 		}
@@ -111,7 +110,7 @@ public class PlayerMovement : MonoBehaviour
 			//Ground Check
 			if (Physics2D.OverlapBox(_groundCheckPoint.position, _groundCheckSize, 0, _groundLayer) && !IsJumping) //checks if set box overlaps with ground
 			{
-				Debug.Log("grounded");
+				// Debug.Log("grounded");
 				LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
             }		
 
@@ -139,6 +138,7 @@ public class PlayerMovement : MonoBehaviour
 				_isJumpFalling = true;
 		}
 
+		// for wallJumpTime after wall jumping the boolean does not switch
 		if (IsWallJumping && Time.time - _wallJumpStartTime > Data.wallJumpTime)
 		{
 			IsWallJumping = false;
@@ -169,6 +169,7 @@ public class PlayerMovement : MonoBehaviour
 			_isJumpCut = false;
 			_isJumpFalling = false;
 			_wallJumpStartTime = Time.time;
+			// LastOnWallRightTime is set to coyote time after jump off right wall and decreased continuously 
 			_lastWallJumpDir = (LastOnWallRightTime > 0) ? -1 : 1;
 			
 			WallJump(_lastWallJumpDir);
@@ -176,6 +177,7 @@ public class PlayerMovement : MonoBehaviour
 		#endregion
 
 		#region SLIDE CHECKS
+		// TODO: check this later to see how to make sliding work
 		if (CanSlide() && ((LastOnWallLeftTime > 0 && _moveInput.x < 0) || (LastOnWallRightTime > 0 && _moveInput.x > 0)))
 			IsSliding = true;
 		else
@@ -234,7 +236,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     #region INPUT CALLBACKS
-	//Methods which whandle input detected in Update()
+	//Methods which handle input detected in Update()
     public void OnJumpInput()
 	{
 		LastPressedJumpTime = Data.jumpInputBufferTime;
@@ -411,11 +413,14 @@ public class PlayerMovement : MonoBehaviour
 
 	public bool CanSlide()
     {
-		if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && LastOnGroundTime <= 0)
-			return true;
-		else
-			return false;
-	}
+	    if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && LastOnGroundTime <= 0) {
+		    Debug.Log("can slide");
+		    return true;
+	    }
+	    else {
+		    return false;
+	    }
+    }
     #endregion
 
 
