@@ -27,11 +27,14 @@ MonoBehaviour:
   deccelInAir: 0.5
   doConserveMomentum: 0
   jumpHeight: 11
+  maxHighJumpHeight: 20
+  minHighJumpHeight: 10
+  maxChargeTime: 1
   jumpTimeToApex: 0.3
   jumpForce: 73.33333
-  jumpCutGravityMult: 1
+  jumpCutGravityMult: 1.3
   jumpHangGravityMult: 1
-  jumpHangTimeThreshold: 0
+  jumpHangTimeThreshold: 2
   jumpHangAccelerationMult: 1
   jumpHangMaxSpeedMult: 1
   wallJumpForce: {x: 30, y: 70}
