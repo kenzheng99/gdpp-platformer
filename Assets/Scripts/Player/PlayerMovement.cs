@@ -6,6 +6,7 @@
 	Feel free to use this in your own games, and I'd love to see anything you make!
  */
 
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -38,14 +39,18 @@ public class PlayerMovement : MonoBehaviour
 	public float LastOnWallLeftTime { get; private set; }
 
 	//Jump
-	private bool _isJumpCut;
-	private bool _isJumpFalling;
+	private bool isJumpCut;
+	private bool isJumpFalling;
+	private bool chargingJump;
+	private bool isHighJump;
+	private float chargeJumpStartTime;
+	private float highJumpGravityStrength;
 
 	//Wall Jump
-	private float _wallJumpStartTime;
-	private int _lastWallJumpDir;
+	private float wallJumpStartTime;
+	private int lastWallJumpDir;
 
-	private Vector2 _moveInput;
+	private Vector2 moveInput;
 	public float LastPressedJumpTime { get; private set; }
 
 	//Set all of these up in the inspector
@@ -85,22 +90,41 @@ public class PlayerMovement : MonoBehaviour
 		#endregion
 
 		#region INPUT HANDLER
-		_moveInput.x = Input.GetAxisRaw("Horizontal");
-		_moveInput.y = Input.GetAxisRaw("Vertical");
+		moveInput.x = Input.GetAxisRaw("Horizontal");
+		moveInput.y = Input.GetAxisRaw("Vertical");
 
-		if (_moveInput.x != 0) {
-			CheckDirectionToFace(_moveInput.x > 0);
+		if (moveInput.x != 0) {
+			CheckDirectionToFace(moveInput.x > 0);
 		}
-			
 
-		if(Input.GetKeyDown(KeyCode.Space))// || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
-        {
+		if (Input.GetKey(KeyCode.LeftShift)) // || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
+		{
+			if (Input.GetKeyDown(KeyCode.Space)) {
+				Debug.Log("charge jump");
+				chargingJump = true;
+				chargeJumpStartTime = Time.time;
+			}
+		} else if (Input.GetKeyDown(KeyCode.Space)) {
 			OnJumpInput();
-        }
+		}
 
 		if (Input.GetKeyUp(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
 		{
 			OnJumpUpInput();
+		}
+		
+		if (chargingJump && Input.GetKeyUp(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
+		{
+			chargingJump = false;
+			isHighJump = true;
+
+			var chargeTime = Time.time - chargeJumpStartTime;
+			if (chargeTime > Data.maxChargeTime) chargeTime = Data.maxChargeTime;
+			
+			var jumpHeight = Mathf.Lerp(Data.maxHighJumpHeight, Data.maxHighJumpHeight/3, chargeTime / Data.maxChargeTime);
+			Debug.Log(jumpHeight);
+			highJumpGravityStrength = -(2 * jumpHeight) / (Data.jumpTimeToApex * Data.jumpTimeToApex);
+			OnJumpInput();
 		}
 		#endregion
 
@@ -133,23 +157,24 @@ public class PlayerMovement : MonoBehaviour
 		if (IsJumping && RB.velocity.y < 0)
 		{
 			IsJumping = false;
+			isHighJump = false;
 
 			if(!IsWallJumping)
-				_isJumpFalling = true;
+				isJumpFalling = true;
 		}
 
 		// for wallJumpTime after wall jumping the boolean does not switch
-		if (IsWallJumping && Time.time - _wallJumpStartTime > Data.wallJumpTime)
+		if (IsWallJumping && Time.time - wallJumpStartTime > Data.wallJumpTime)
 		{
 			IsWallJumping = false;
 		}
 
 		if (LastOnGroundTime > 0 && !IsJumping && !IsWallJumping)
         {
-			_isJumpCut = false;
+			isJumpCut = false;
 
 			if(!IsJumping)
-				_isJumpFalling = false;
+				isJumpFalling = false;
 		}
 
 		//Jump
@@ -157,8 +182,8 @@ public class PlayerMovement : MonoBehaviour
 		{
 			IsJumping = true;
 			IsWallJumping = false;
-			_isJumpCut = false;
-			_isJumpFalling = false;
+			isJumpCut = false;
+			isJumpFalling = false;
 			Jump();
 		}
 		//WALL JUMP
@@ -166,19 +191,19 @@ public class PlayerMovement : MonoBehaviour
 		{
 			IsWallJumping = true;
 			IsJumping = false;
-			_isJumpCut = false;
-			_isJumpFalling = false;
-			_wallJumpStartTime = Time.time;
+			isJumpCut = false;
+			isJumpFalling = false;
+			wallJumpStartTime = Time.time;
 			// LastOnWallRightTime is set to coyote time after jump off right wall and decreased continuously 
-			_lastWallJumpDir = (LastOnWallRightTime > 0) ? -1 : 1;
+			lastWallJumpDir = (LastOnWallRightTime > 0) ? -1 : 1;
 			
-			WallJump(_lastWallJumpDir);
+			WallJump(lastWallJumpDir);
 		}
 		#endregion
 
 		#region SLIDE CHECKS
 		// TODO: check this later to see how to make sliding work
-		if (CanSlide() && ((LastOnWallLeftTime > 0 && _moveInput.x < 0) || (LastOnWallRightTime > 0 && _moveInput.x > 0)))
+		if (CanSlide() && ((LastOnWallLeftTime > 0 && moveInput.x < 0) || (LastOnWallRightTime > 0 && moveInput.x > 0)))
 			IsSliding = true;
 		else
 			IsSliding = false;
@@ -190,20 +215,20 @@ public class PlayerMovement : MonoBehaviour
 		{
 			SetGravityScale(0);
 		}
-		else if (RB.velocity.y < 0 && _moveInput.y < 0)
+		else if (RB.velocity.y < 0 && moveInput.y < 0)
 		{
 			//Much higher gravity if holding down
 			SetGravityScale(Data.gravityScale * Data.fastFallGravityMult);
 			//Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
 			RB.velocity = new Vector2(RB.velocity.x, Mathf.Max(RB.velocity.y, -Data.maxFastFallSpeed));
 		}
-		else if (_isJumpCut)
+		else if (isJumpCut)
 		{
 			//Higher gravity if jump button released
 			SetGravityScale(Data.gravityScale * Data.jumpCutGravityMult);
 			RB.velocity = new Vector2(RB.velocity.x, Mathf.Max(RB.velocity.y, -Data.maxFallSpeed));
 		}
-		else if ((IsJumping || IsWallJumping || _isJumpFalling) && Mathf.Abs(RB.velocity.y) < Data.jumpHangTimeThreshold)
+		else if ((IsJumping || IsWallJumping || isJumpFalling) && Mathf.Abs(RB.velocity.y) < Data.jumpHangTimeThreshold)
 		{
 			SetGravityScale(Data.gravityScale * Data.jumpHangGravityMult);
 		}
@@ -213,6 +238,10 @@ public class PlayerMovement : MonoBehaviour
 			SetGravityScale(Data.gravityScale * Data.fallGravityMult);
 			//Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
 			RB.velocity = new Vector2(RB.velocity.x, Mathf.Max(RB.velocity.y, -Data.maxFallSpeed));
+		}
+		else if (isHighJump) {
+			// Lower gravity if high jumping, gravity depends on charge time
+			SetGravityScale(highJumpGravityStrength / Physics2D.gravity.y);
 		}
 		else
 		{
@@ -245,7 +274,7 @@ public class PlayerMovement : MonoBehaviour
 	public void OnJumpUpInput()
 	{
 		if (CanJumpCut() || CanWallJumpCut())
-			_isJumpCut = true;
+			isJumpCut = true;
 	}
     #endregion
 
@@ -262,7 +291,7 @@ public class PlayerMovement : MonoBehaviour
 	{
 		Debug.Log("run");
 		//Calculate the direction we want to move in and our desired velocity
-		float targetSpeed = _moveInput.x * Data.runMaxSpeed;
+		float targetSpeed = moveInput.x * Data.runMaxSpeed;
 		//We can reduce are control using Lerp() this smooths changes to are direction and speed
 		targetSpeed = Mathf.Lerp(RB.velocity.x, targetSpeed, lerpAmount);
 
@@ -279,7 +308,7 @@ public class PlayerMovement : MonoBehaviour
 
 		#region Add Bonus Jump Apex Acceleration
 		//Increase are acceleration and maxSpeed when at the apex of their jump, makes the jump feel a bit more bouncy, responsive and natural
-		if ((IsJumping || IsWallJumping || _isJumpFalling) && Mathf.Abs(RB.velocity.y) < Data.jumpHangTimeThreshold)
+		if ((IsJumping || IsWallJumping || isJumpFalling) && Mathf.Abs(RB.velocity.y) < Data.jumpHangTimeThreshold)
 		{
 			accelRate *= Data.jumpHangAccelerationMult;
 			targetSpeed *= Data.jumpHangMaxSpeedMult;
@@ -398,7 +427,7 @@ public class PlayerMovement : MonoBehaviour
 	private bool CanWallJump()
     {
 		return LastPressedJumpTime > 0 && LastOnWallTime > 0 && LastOnGroundTime <= 0 && (!IsWallJumping ||
-			 (LastOnWallRightTime > 0 && _lastWallJumpDir == 1) || (LastOnWallLeftTime > 0 && _lastWallJumpDir == -1));
+			 (LastOnWallRightTime > 0 && lastWallJumpDir == 1) || (LastOnWallLeftTime > 0 && lastWallJumpDir == -1));
 	}
 
 	private bool CanJumpCut()

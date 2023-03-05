@@ -33,6 +33,9 @@ public class PlayerData : ScriptableObject
 
 	[Header("Jump")]
 	public float jumpHeight; //Height of the player's jump
+	public float maxHighJumpHeight; //Max height the player can reach using high jump
+	public float minHighJumpHeight; //min height the player can reach using high jump
+	public float maxChargeTime; //How long the player has to hold to reach max jump height
 	public float jumpTimeToApex; //Time between applying the jump force and reaching the desired jump height. These values also control the player's gravity and jump force.
 	[HideInInspector] public float jumpForce; //The actual force applied (upwards) to the player when they jump.
 
