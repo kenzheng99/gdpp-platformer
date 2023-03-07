@@ -97,22 +97,15 @@ public class PlayerMovement : MonoBehaviour
 			CheckDirectionToFace(moveInput.x > 0);
 		}
 
-		if (Input.GetKey(KeyCode.LeftShift)) // || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
+		if (Input.GetKey(KeyCode.Space)) // || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
 		{
 			if (Input.GetKeyDown(KeyCode.Space)) {
 				Debug.Log("charge jump");
 				chargingJump = true;
 				chargeJumpStartTime = Time.time;
 			}
-		} else if (Input.GetKeyDown(KeyCode.Space)) {
-			OnJumpInput();
 		}
 
-		if (Input.GetKeyUp(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
-		{
-			OnJumpUpInput();
-		}
-		
 		if (chargingJump && Input.GetKeyUp(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
 		{
 			chargingJump = false;
