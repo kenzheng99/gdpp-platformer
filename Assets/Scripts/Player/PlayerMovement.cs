@@ -99,31 +99,25 @@ public class PlayerMovement : MonoBehaviour
 
 		if (Input.GetKey(KeyCode.LeftShift)) // || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
 		{
-			if (Input.GetKeyDown(KeyCode.Space)) {
-				Debug.Log("charge jump");
+			if (chargingJump == false && !IsJumping) {
 				chargingJump = true;
 				chargeJumpStartTime = Time.time;
 			}
-		} else if (Input.GetKeyDown(KeyCode.Space)) {
-			OnJumpInput();
 		}
 
-		if (Input.GetKeyUp(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
+		if (Input.GetKeyDown(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
 		{
-			OnJumpUpInput();
-		}
-		
-		if (chargingJump && Input.GetKeyUp(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
-		{
-			chargingJump = false;
-			isHighJump = true;
-
-			var chargeTime = Time.time - chargeJumpStartTime;
-			if (chargeTime > Data.maxChargeTime) chargeTime = Data.maxChargeTime;
+			if (chargingJump) {
+				// different gravity when charge jumping
+				chargingJump = false;
+				isHighJump = true;
 			
-			var jumpHeight = Mathf.Lerp(Data.maxHighJumpHeight, Data.maxHighJumpHeight/3, chargeTime / Data.maxChargeTime);
-			Debug.Log(jumpHeight);
-			highJumpGravityStrength = -(2 * jumpHeight) / (Data.jumpTimeToApex * Data.jumpTimeToApex);
+				var chargeTime = Time.time - chargeJumpStartTime;
+				if (chargeTime > Data.maxChargeTime) chargeTime = Data.maxChargeTime;
+			
+				var jumpHeight = Mathf.Lerp(Data.maxHighJumpHeight, Data.maxHighJumpHeight/3, chargeTime / Data.maxChargeTime);
+				highJumpGravityStrength = -(2 * jumpHeight) / (Data.jumpTimeToApex * Data.jumpTimeToApex);
+			}
 			OnJumpInput();
 		}
 		#endregion
@@ -289,7 +283,7 @@ public class PlayerMovement : MonoBehaviour
     #region RUN METHODS
     private void Run(float lerpAmount)
 	{
-		Debug.Log("run");
+		// Debug.Log("run");
 		//Calculate the direction we want to move in and our desired velocity
 		float targetSpeed = moveInput.x * Data.runMaxSpeed;
 		//We can reduce are control using Lerp() this smooths changes to are direction and speed
