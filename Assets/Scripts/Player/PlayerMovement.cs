@@ -395,13 +395,15 @@ public class PlayerMovement : MonoBehaviour
 	{
 		//Works the same as the Run but only in the y-axis
 		//THis seems to work fine, buit maybe you'll find a better way to implement a slide into this system
-		float speedDif = Data.slideSpeed - RB.velocity.y;	
-		float movement = speedDif * Data.slideAccel;
+		// float speedDif = Data.slideSpeed - RB.velocity.y;	
+		// float movement = speedDif * Data.slideAccel;
 		//So, we clamp the movement here to prevent any over corrections (these aren't noticeable in the Run)
 		//The force applied can't be greater than the (negative) speedDifference * by how many times a second FixedUpdate() is called. For more info research how force are applied to rigidbodies.
-		movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif)  * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
+		// movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif)  * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
 
 		// RB.AddForce(movement * Vector2.up);
+		var slideSpeed = -5f;
+		RB.velocity = new Vector2(0, slideSpeed);
 	}
     #endregion
 
