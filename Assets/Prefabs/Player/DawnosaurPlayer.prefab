@@ -29,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 221684774855534732}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6020516315014125045}
   - {fileID: 5104195333292284061}
@@ -76,8 +76,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -2057150787
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: bc584621ccd5a634386c0c10b753f427, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -106,7 +106,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 3e29ab78e8b644a4cb25f1312c0aab3d, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -120,11 +120,11 @@ BoxCollider2D:
   m_GameObject: {fileID: 221684774855534732}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 3e29ab78e8b644a4cb25f1312c0aab3d, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.92817426, y: 0}
+  m_Offset: {x: 0.8321943, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -135,7 +135,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 16.136385, y: 17.421547}
+  m_Size: {x: 16.328344, y: 17.421547}
   m_EdgeRadius: 0
 --- !u!114 &221684774855534723
 MonoBehaviour:
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Data: {fileID: 11400000, guid: 85ed6ecf900244f01bb3d839b9ad9a9f, type: 2}
   _groundCheckPoint: {fileID: 6020516315014125045}
-  _groundCheckSize: {x: 0.49, y: 0.03}
+  _groundCheckSize: {x: 3, y: 0.03}
   _frontWallCheckPoint: {fileID: 5104195333292284061}
   _backWallCheckPoint: {fileID: 7223805166481482099}
   _wallCheckSize: {x: 0.5, y: 1}
