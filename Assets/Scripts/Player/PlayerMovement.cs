@@ -49,6 +49,10 @@ public class PlayerMovement : MonoBehaviour
 	//Wall Jump
 	private float wallJumpStartTime;
 	private int lastWallJumpDir;
+	
+	//Slide
+	private float startSlideTime;
+	private bool isTimeToSlide;
 
 	private Vector2 moveInput;
 	public float LastPressedJumpTime { get; private set; }
@@ -130,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
 			{
 				// Debug.Log("grounded");
 				LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
-            }		
+			}		
 
 			//Right Wall Check
 			if (((Physics2D.OverlapBox(_frontWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && IsFacingRight)
@@ -393,17 +397,7 @@ public class PlayerMovement : MonoBehaviour
 	#region OTHER MOVEMENT METHODS
 	private void Slide()
 	{
-		//Works the same as the Run but only in the y-axis
-		//THis seems to work fine, buit maybe you'll find a better way to implement a slide into this system
-		// float speedDif = Data.slideSpeed - RB.velocity.y;	
-		// float movement = speedDif * Data.slideAccel;
-		//So, we clamp the movement here to prevent any over corrections (these aren't noticeable in the Run)
-		//The force applied can't be greater than the (negative) speedDifference * by how many times a second FixedUpdate() is called. For more info research how force are applied to rigidbodies.
-		// movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif)  * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
-
-		// RB.AddForce(movement * Vector2.up);
-		var slideSpeed = -5f;
-		RB.velocity = new Vector2(0, slideSpeed);
+		RB.velocity = new Vector2(0, Data.slideSpeed);
 	}
     #endregion
 
@@ -438,11 +432,23 @@ public class PlayerMovement : MonoBehaviour
 
 	public bool CanSlide()
     {
+	    if (isTimeToSlide) {
+		    Debug.Log("set timer");
+		    startSlideTime = Time.time;
+	    }
+	    var hasTimeToSlide = Time.time - startSlideTime <= Data.slideDuration;
 	    if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && LastOnGroundTime <= 0) {
 		    Debug.Log("can slide");
-		    return true;
+		    if (hasTimeToSlide) {
+			    isTimeToSlide = false;
+			    return true;
+		    }
+		    else {
+			    return false;
+		    }
 	    }
 	    else {
+		    isTimeToSlide = true;
 		    return false;
 	    }
     }

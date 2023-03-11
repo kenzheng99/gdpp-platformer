@@ -41,7 +41,7 @@ MonoBehaviour:
   wallJumpRunLerp: 0.075
   wallJumpTime: 0.3
   doTurnOnWallJump: 1
-  slideSpeed: -12
-  slideAccel: 12
+  slideSpeed: -7
+  slideDuration: 0.8
   coyoteTime: 0.05
   jumpInputBufferTime: 0.05
