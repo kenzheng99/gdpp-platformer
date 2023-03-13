@@ -113,6 +113,10 @@ public class PlayerMovement : MonoBehaviour
 			}
 		}
 
+		if (Input.GetKeyUp(KeyCode.LeftShift)) {
+			chargingJump = false;
+		}
+
 		if (Input.GetKeyDown(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
 		{
 			if (chargingJump) {
@@ -204,7 +208,6 @@ public class PlayerMovement : MonoBehaviour
 		#endregion
 
 		#region SLIDE CHECKS
-		// TODO: check this later to see how to make sliding work
 		if (CanSlide() && ((LastOnWallLeftTime > 0 && moveInput.x < 0) || (LastOnWallRightTime > 0 && moveInput.x > 0)))
 			IsSliding = true;
 		else
