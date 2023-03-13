@@ -306,7 +306,7 @@ public class PlayerMovement : MonoBehaviour
     #region RUN METHODS
     private void Run(float lerpAmount)
 	{
-		// Debug.Log("run");
+		Debug.Log("run");
 		//Calculate the direction we want to move in and our desired velocity
 		float targetSpeed = moveInput.x * Data.runMaxSpeed;
 		
