@@ -41,7 +41,7 @@ public class PlayerMovement : MonoBehaviour
 	//Jump
 	private bool isJumpCut;
 	private bool isJumpFalling;
-	private bool chargingJump;
+	private bool isChargingJump;
 	private bool isHighJump;
 	private float chargeJumpStartTime;
 	private float highJumpGravityStrength;
@@ -107,21 +107,21 @@ public class PlayerMovement : MonoBehaviour
 
 		if (Input.GetKey(KeyCode.LeftShift)) // || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
 		{
-			if (chargingJump == false && !IsJumping) {
-				chargingJump = true;
+			if (isChargingJump == false && !IsJumping) {
+				isChargingJump = true;
 				chargeJumpStartTime = Time.time;
 			}
 		}
 
 		if (Input.GetKeyUp(KeyCode.LeftShift)) {
-			chargingJump = false;
+			isChargingJump = false;
 		}
 
 		if (Input.GetKeyDown(KeyCode.Space))// || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
 		{
-			if (chargingJump) {
+			if (isChargingJump) {
 				// different gravity when charge jumping
-				chargingJump = false;
+				isChargingJump = false;
 				isHighJump = true;
 			
 				var chargeTime = Time.time - chargeJumpStartTime;
@@ -309,6 +309,11 @@ public class PlayerMovement : MonoBehaviour
 		// Debug.Log("run");
 		//Calculate the direction we want to move in and our desired velocity
 		float targetSpeed = moveInput.x * Data.runMaxSpeed;
+		
+		//If charging jump then target speed is lower
+		if (isChargingJump) {
+			targetSpeed = moveInput.x * Data.chargingRunMaxSpeed;
+		}
 		//We can reduce are control using Lerp() this smooths changes to are direction and speed
 		targetSpeed = Mathf.Lerp(RB.velocity.x, targetSpeed, lerpAmount);
 
