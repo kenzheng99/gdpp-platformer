@@ -69,11 +69,15 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Layers & Tags")]
 	[SerializeField] private LayerMask _groundLayer;
+	
+    //Animation
+    private Animator _anim;
 	#endregion
 
     private void Awake()
 	{
 		RB = GetComponent<Rigidbody2D>();
+		_anim = GetComponent<Animator>();
 	}
 
 	private void Start()
@@ -246,6 +250,18 @@ public class PlayerMovement : MonoBehaviour
 			//Default gravity if standing on a platform or moving upwards
 			SetGravityScale(Data.gravityScale);
 		}
+		#endregion
+		
+		#region ANIMATIONS
+
+		if (Math.Abs(RB.velocity.x) >= 0.5f) {
+			Debug.Log("is running");
+			_anim.SetBool("isRunning", true);
+		} else {
+			Debug.Log("is not running");
+			_anim.SetBool("isRunning", false);
+		}
+
 		#endregion
     }
 
